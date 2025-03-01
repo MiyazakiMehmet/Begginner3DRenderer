@@ -7,7 +7,7 @@ OpenGL graphics API is used, and other necessary libraries.
 
 Build
 
--Create a directory to clone the project 
+-Create a directory to clone the project \n
 -Open terminal
 -cd CreatedProject
 -git clone (copy and paste HTPPS or SSH key)
