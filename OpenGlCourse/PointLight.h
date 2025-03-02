@@ -13,7 +13,7 @@ public:
 		GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation);
 	 
 	~PointLight();
-private:
+protected:
 	glm::vec3 position; //Position of the light bulb
 
 	GLfloat constant, linear, exponent;
