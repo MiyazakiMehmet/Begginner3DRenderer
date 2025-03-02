@@ -19,4 +19,4 @@ private:
 	GLfloat constant, linear, exponent;
 
 };
-
+ 
