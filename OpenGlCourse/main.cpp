@@ -111,11 +111,28 @@ void CreateObject() {
 		0.0f,   1.0f,  0.0f,  0.5f,            1.0f,											0.0f, 0.0f, 0.0f
 	};
 
+	unsigned int floorIndices[] = {
+		0, 2, 1,
+		1, 2, 3
+	};
+
+	GLfloat floorVertices[] = {
+		-10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+		10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
+		-10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
+		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
+	};
+
+
 	CalculateAverageNormals(indicies, 12, verticies, 32, 8, 5);
 
 	Mesh *obj1 = new Mesh();
 	obj1->CreateMesh(verticies, indicies, 32, 12);
 	meshList.push_back(obj1);
+
+	Mesh* obj2 = new Mesh();
+	obj2->CreateMesh(floorVertices, floorIndices, 32, 6);
+	meshList.push_back(obj2);
 
 }
 
@@ -135,14 +152,19 @@ int main() {
 	//Loading the shader
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
-	directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.2f,
-										2.0f, -1.0f, -2.0f, 0.7f);
+	directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.0f,
+										2.0f, -1.0f, -2.0f, 0.0f);
 
 	unsigned int pointLightCount = 0;
 
 	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-								0.0f, 2.0f,
+								0.1f, 1.0f,
 								-4.0f, 0.0f, 0.0f,
+								0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f,
+								0.1f, 1.0f,
+								2.0f, 2.0f, 0.0f,
 								0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 
@@ -195,19 +217,20 @@ int main() {
 
 
 
-		glm::mat4 model(1.0f);
 		//Moves the object in the specifed axis
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
+		//Adding data to our empty uniformEyePosition
+		glUniform3f(uniformEyePosition, camera.GetCameraLocation().x, camera.GetCameraLocation().y, camera.GetCameraLocation().z);
+
+		glm::mat4 model(1.0f);
+
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -4.0f));
 		//model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
 
 		//Binding our uniform and matrix
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
-
-		//Adding data to our empty uniformEyePosition
-		glUniform3f(uniformEyePosition, camera.GetCameraLocation().x, camera.GetCameraLocation().y, camera.GetCameraLocation().z);
 
 		//Using texture
 		meshList[0]->brickTexture.UseTexture();
@@ -215,6 +238,14 @@ int main() {
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		//Using/drawing the mesh
 		meshList[0]->RenderMesh();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		meshList[1]->dirtTexture.UseTexture();
+		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		meshList[1]->RenderMesh();
 
 
 		glUseProgram(0);
