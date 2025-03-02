@@ -50,6 +50,8 @@ void Mesh::CreateMesh(GLfloat* verticies, unsigned int* indicies, unsigned int n
 	brickTexture.LoadTexture();
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
+	plainTexture = Texture("Textures/plain.png");
+	plainTexture.LoadTexture();
 
 }
 
