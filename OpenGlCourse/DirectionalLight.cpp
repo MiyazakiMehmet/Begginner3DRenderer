@@ -17,7 +17,7 @@ void DirectionalLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambien
 {
 	//Call base class constructor before adding new functionality
 	Light::UseLight(ambientIntensityLocation, ambientColourLocation, diffuseIntensityLocation);
-
+	//getting locating and store data
 	glUniform3f(directionLocation, direction.x, direction.y, direction.z);
 
 }

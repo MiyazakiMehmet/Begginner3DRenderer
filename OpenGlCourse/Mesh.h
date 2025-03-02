@@ -9,6 +9,7 @@ public:
 	Texture brickTexture;
 	Texture dirtTexture;
 	Texture plainTexture;
+	Texture korTexture;
 	
 	Mesh();
 	

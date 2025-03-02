@@ -53,6 +53,7 @@ void Mesh::CreateMesh(GLfloat* verticies, unsigned int* indicies, unsigned int n
 	plainTexture = Texture("Textures/plain.png");
 	plainTexture.LoadTexture();
 
+
 }
 
 void Mesh::RenderMesh()
