@@ -8,6 +8,7 @@ class Mesh {
 public:
 	Texture brickTexture;
 	Texture dirtTexture;
+	Texture plainTexture;
 	
 	Mesh();
 	
