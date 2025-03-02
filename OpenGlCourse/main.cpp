@@ -5,12 +5,15 @@
 #include <cmath>
 #include <vector>
 
+#include "CommonValues.h"
+
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
 #include "Material.h"
 
 #include "GL/glew.h"
@@ -26,6 +29,7 @@ const float toRadians = 3.14159265f / 180.f;
 Window mainWindow;
 Camera camera;
 DirectionalLight directionalLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
 Material shinyMaterial;
 Material dullMaterial;
 std::vector<Mesh*> meshList;
@@ -132,13 +136,21 @@ int main() {
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
 	directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.2f,
-				  2.0f, -1.0f, -2.0f, 0.7f);
+										2.0f, -1.0f, -2.0f, 0.7f);
+
+	unsigned int pointLightCount = 0;
+
+	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
+								0.0f, 2.0f,
+								-4.0f, 0.0f, 0.0f,
+								0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+
 	shinyMaterial = Material(1.0f, 32.0f);
 	dullMaterial = Material(0.3f, 4.0f);
 
 	GLuint uniformProjection = 0, uniformView = 0, uniformModel = 0,
-		uniformAmbientIntensity = 0, uniformAmbientColour = 0,
-		uniformDiffuseIntensity = 0, uniformDirection = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformEyePosition = 0;
 
 	//projection matrix that we want to attach
@@ -173,16 +185,14 @@ int main() {
 		uniformProjection = shaderList[0].GetProjectionLocation();
 		uniformView = shaderList[0].GetViewLocation();
 		uniformModel = shaderList[0].GetModelLocation();
-		uniformAmbientColour = shaderList[0].GetAmbientColourLocation();
-		uniformAmbientIntensity = shaderList[0].GetAmbientIntensityLocation();
-		uniformDiffuseIntensity = shaderList[0].GetDiffuseIntensityLocation();
-		uniformDirection = shaderList[0].GetDirectionLocation();
 		uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
 		uniformShininess = shaderList[0].GetShininessLocation();
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
 
 		//Using lightning
-		directionalLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection);
+		shaderList[0].SetDirectionalLight(&directionalLight);
+		shaderList[0].SetPointLights(pointLights, pointLightCount); //since pointLights is array we dont have to reference it because its already referenced
+
 
 
 		glm::mat4 model(1.0f);
