@@ -24,7 +24,7 @@ void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColou
 	glUniform3f(positionLocation, position.x, position.y, position.z);
 	glUniform1f(constantLocation, constant);
 	glUniform1f(linearLocation, linear);
-	glUniform1f(exponentLocation, exponent);
+	glUniform1f(exponentLocation, exponent); 
 
 }
 

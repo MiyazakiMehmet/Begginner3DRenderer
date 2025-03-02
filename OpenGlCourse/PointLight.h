@@ -11,7 +11,7 @@ public:
 
 	void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColourLocation, GLfloat diffuseIntensityLocation, GLfloat positionLocation,
 		GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation);
-
+	 
 	~PointLight();
 private:
 	glm::vec3 position; //Position of the light bulb
