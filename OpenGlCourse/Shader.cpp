@@ -1,4 +1,4 @@
-#include "Shader.h"
+﻿#include "Shader.h"
 
 Shader::Shader()
 {
@@ -121,6 +121,23 @@ void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount)
 	}
 }
 
+void Shader::SetSpotLights(SpotLight* sLight, unsigned int lightCount)
+{
+	if (lightCount > MAX_SPOT_LIGHTS) lightCount = MAX_SPOT_LIGHTS;
+
+
+
+	glUniform1i(uniformSpotLightCount, lightCount);
+
+	for (size_t i = 0; i < lightCount; i++)
+	{
+		sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, uniformSpotLight[i].uniformColour,
+			uniformSpotLight[i].uniformDiffuseIntensity, uniformSpotLight[i].uniformPosition, uniformSpotLight[i].uniformDirection,
+			uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
+			uniformSpotLight[i].uniformEdge);
+	}
+}
+
 void Shader::UseShader()
 {
 	glUseProgram(shaderID);
@@ -215,6 +232,39 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	
 	}
 
+	uniformSpotLightCount = glGetUniformLocation(shaderID, "spotLightCount");
+	for (size_t i = 0; i < MAX_SPOT_LIGHTS; i++) {
+		char locBuff[100] = { '\0' };
+
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.colour", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformColour = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.ambientIntensity", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformAmbientIntensity = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.base.diffuseIntensity", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformDiffuseIntensity = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.position", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformPosition = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.constant", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformConstant = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.linear", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformLinear = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].base.exponent", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformExponent = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].direction", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformDirection = glGetUniformLocation(shaderID, locBuff);
+
+		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i); //That func will store the string that we specified (%d = 0,1,2...)
+		uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuff);
+
+	}
 }
 
 void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType)

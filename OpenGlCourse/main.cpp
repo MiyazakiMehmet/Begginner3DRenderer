@@ -14,6 +14,7 @@
 #include "Texture.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "Material.h"
 
 #include "GL/glew.h"
@@ -23,13 +24,14 @@
 #include "gtc/type_ptr.hpp"
 
 //Window Dimensions
-const GLint WIDTH = 800, HEIGHT = 600;
+const GLint WIDTH = 1200, HEIGHT = 800;
 const float toRadians = 3.14159265f / 180.f;
 
 Window mainWindow;
 Camera camera;
 DirectionalLight directionalLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
 Material shinyMaterial;
 Material dullMaterial;
 std::vector<Mesh*> meshList;
@@ -144,7 +146,7 @@ void CreateShaders() {
 
 int main() {
 
-	mainWindow = Window(800, 600);
+	mainWindow = Window(WIDTH, HEIGHT);
 	mainWindow.Initialize();
 
 	//Loading the mesh
@@ -152,21 +154,39 @@ int main() {
 	//Loading the shader
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
-	directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.1f,
-										2.0f, -1.0f, -2.0f, 0.0f);
+	directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
+										0.1f,
+										0.0f, 0.0f, -1.0f, 0.0f);
 
 	unsigned int pointLightCount = 0;
 
 	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-								0.1f, 0.3f,
-								-5.0f, 0.0f, 0.0f,
+								0.0f, 0.3f,
+							   -5.0f, 0.0f, 0.0f,
 								0.3f, 0.2f, 0.1f);
-	pointLightCount++;
+	//pointLightCount++;
 	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f,
-								0.1f, 1.0f,
+								0.0f, 0.1f,
 								2.0f, 2.0f, 0.0f,
 								0.3f, 0.2f, 0.1f);
-	pointLightCount++;
+	//pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+
+	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f,
+		0.0f, 0.1f, 0.0f,
+		0.0f, -1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		30.0f);
+	spotLightCount++;
+	spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
+                        	  0.0f, 4.0f,
+                        	  3.0f, 0.2f, 0.0f,
+                        	  -6.0f, -1.3f, 0.0f,
+                        	  1.0f, 0.0f, 0.0f,
+							  20.0f);
+	//spotLightCount++;
 
 
 	shinyMaterial = Material(1.0f, 32.0f);
@@ -211,17 +231,19 @@ int main() {
 		uniformShininess = shaderList[0].GetShininessLocation();
 		uniformEyePosition = shaderList[0].GetEyePositionLocation();
 
+		spotLights[0].SetFlash(camera.GetCameraPosition(), camera.GetCameraDirection());
+
 		//Using lightning
 		shaderList[0].SetDirectionalLight(&directionalLight);
 		shaderList[0].SetPointLights(pointLights, pointLightCount); //since pointLights is array we dont have to reference it because its already referenced
-
+		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 
 		//Moves the object in the specifed axis
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
 		//Adding data to our empty uniformEyePosition
-		glUniform3f(uniformEyePosition, camera.GetCameraLocation().x, camera.GetCameraLocation().y, camera.GetCameraLocation().z);
+		glUniform3f(uniformEyePosition, camera.GetCameraPosition().x, camera.GetCameraPosition().y, camera.GetCameraPosition().z);
 
 		glm::mat4 model(1.0f);
 
@@ -243,7 +265,7 @@ int main() {
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[1]->plainTexture.UseTexture();
+		meshList[1]->dirtTexture.UseTexture();
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
 

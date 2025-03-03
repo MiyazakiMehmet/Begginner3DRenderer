@@ -8,6 +8,7 @@ in vec3 Normal;
 in vec3 FragPos;
 
 const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
 
 struct Light{
 vec3 colour;
@@ -28,15 +29,23 @@ float linear;
 float exponent;
 };
 
+struct SpotLight{
+PointLight base;
+vec3 direction;
+float edge;
+};
+
 struct Material{
 float specularIntensity;
 float shininess;
 };
 
 uniform int pointLightCount;
+uniform int spotLightCount;
 
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 uniform sampler2D theTexture;
 uniform Material material;
@@ -70,54 +79,70 @@ vec4 CalcDirectionalLight()
 	return CalcLightByDirection(directionalLight.base, directionalLight.direction);
 }
 
-vec4 CalcPointLights() {
-    vec4 totalColour = vec4(0, 0, 0, 0);
-
-    // 🟡 Debug: Check if no point lights are being processed
-    if (pointLightCount == 0) {
-        return vec4(1, 1, 0, 1); // 🟡 Yellow -> No point lights
-    }
-
-    for (int i = 0; i < pointLightCount; i++) {
-        // 🔵 Debug: Check if the position is (0,0,0)
-        if (pointLights[i].position.x == 0.0 && pointLights[i].position.y == 0.0 && pointLights[i].position.z == 0.0) {
-            return vec4(0, 0, 1, 1);  // 🔵 Blue -> Position might be incorrect
-        }
-
-        vec3 direction = FragPos - pointLights[i].position;
+vec4 CalcPointLight(PointLight pLight){
+        
+        vec3 direction = FragPos - pLight.position;
         float distance = length(direction);
         direction = normalize(direction);
 
-        vec4 colour = CalcLightByDirection(pointLights[i].base, direction);
+        vec4 colour = CalcLightByDirection(pLight.base, direction);
         
-        float attenuation = pointLights[i].exponent * distance * distance +
-                            pointLights[i].linear * distance +
-                            pointLights[i].constant;
-
-        // 🟢 Debug: Check if attenuation is too high
-        if (attenuation > 100.0) {
-            return vec4(0, 1, 0, 1); // 🟢 Green -> Attenuation is too high
-        }
+        float attenuation = pLight.exponent * distance * distance +
+                            pLight.linear * distance +
+                            pLight.constant;
 
         if (attenuation <= 0.0) {
             attenuation = 1.0; // ✅ Prevent division by zero
         }
 
-        totalColour += (colour / attenuation);
-    }
+        return (colour / attenuation);
+}
 
-    // 🔴 Debug: If lighting fails, return red
-    if (totalColour == vec4(0, 0, 0, 0)) {
-        return vec4(1, 0, 0, 1);  // 🔴 Red -> Lighting completely failed
-    }
+vec4 CalcSpotLight(SpotLight sLight){
+	
+	vec3 rayDirection = normalize(FragPos - sLight.base.position);
+	float slFactor = dot(rayDirection, sLight.direction);
+
+	if(slFactor > sLight.edge){
+		vec4 colour = CalcPointLight(sLight.base);
+
+		return colour * (1.0f - (1.0f - slFactor)*(1.0f/(1.0f - sLight.edge)));
+	}
+	else{
+		return vec4(0, 0, 0, 0);
+	}
+}
+
+vec4 CalcPointLights() {
+    vec4 totalColour = vec4(0, 0, 0, 0);
+
+    for (int i = 0; i < pointLightCount; i++) {
+
+		if (pointLights[i].position.x == 0.0 && pointLights[i].position.y == 0.0 && pointLights[i].position.z == 0.0) {
+            return vec4(0, 0, 1, 1);  // 🔵 Blue -> Position might be incorrect
+        }
+        totalColour += CalcPointLight(pointLights[i]);
+    
+	}
 
     return totalColour;
+}
+
+vec4 CalcSpotLights(){
+	vec4 totalColour = vec4(0, 0, 0, 0);
+	for(int i = 0; i < spotLightCount; i++){
+	
+		totalColour += CalcSpotLight(spotLights[i]);
+	}
+
+	return totalColour;
 }
 
 void main()
 {
 	vec4 finalColour = CalcDirectionalLight();
 	finalColour += CalcPointLights();
+	finalColour += CalcSpotLights();
 
 
 	colour = texture(theTexture, TexCoord) * finalColour;

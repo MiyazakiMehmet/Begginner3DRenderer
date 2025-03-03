@@ -18,6 +18,8 @@ public:
 		GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentLocation,
 		GLfloat edgeLocation);
 
+	void SetFlash(glm::vec3 pos, glm::vec3 dir);
+
 
 	~SpotLight();
 private:

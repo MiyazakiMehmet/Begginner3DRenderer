@@ -6,5 +6,6 @@ C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Material.
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Mesh.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\Mesh.obj
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\PointLight.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\PointLight.obj
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Shader.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\Shader.obj
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\SpotLight.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\SpotLight.obj
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Texture.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\Texture.obj
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.cpp;C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\x64\Debug\Window.obj
