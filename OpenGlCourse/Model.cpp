@@ -45,6 +45,19 @@ void Model::LoadNode(aiNode* node, const aiScene* scene)
 
 void Model::LoadMesh(aiMesh* mesh, const aiScene* scene)
 {
+	std::vector<GLfloat> vertices;
+	std::vector<unsigned int> indicies;
+
+	for (size_t i = 0; i < mesh->mNumVertices; i++) {
+		vertices.insert(vertices.end(), { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z });
+		if (mesh->mTextureCoords[0]) {
+			vertices.insert(vertices.end(), { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+		}
+		else {
+			vertices.insert(vertices.end(), { 0.0f, 0.0f });
+		}
+		vertices.insert(vertices.end(), { -mesh->mNormals[i].x, -mesh->mNormals[i].y, -mesh->mNormals[i].z });
+	}
 
 }
 

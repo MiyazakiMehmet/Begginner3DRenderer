@@ -157,7 +157,7 @@ int main() {
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
 	directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
 										0.1f,
-										0.0f, 0.0f, -1.0f, 0.0f);
+										-4.0f, -1.5f, -10.0f, 0.8f);
 
 	unsigned int pointLightCount = 0;
 
@@ -265,7 +265,7 @@ int main() {
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[1]->dirtTexture.UseTexture();
+		meshList[1]->plainTexture.UseTexture();
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
 
