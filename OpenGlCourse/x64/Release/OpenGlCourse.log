@@ -5,12 +5,11 @@ C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(
 C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(17,37): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
   (compiling source file 'main.cpp')
   
-C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(93,24): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(207,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(202,19): warning C4930: 'Assimp::Importer importer(void)': prototyped function not called (was a variable definition intended?)
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(92,24): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(204,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
   Generating code
-  1 of 571 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.cpp(87): warning C4715: 'Window::Initialize': not all control paths return a value
+  All 571 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   OpenGlCourse.vcxproj -> C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\x64\Release\OpenGlCourse.exe

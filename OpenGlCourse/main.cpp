@@ -23,7 +23,6 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
-#include "assimp/Importer.hpp"
 
 //Window Dimensions
 const GLint WIDTH = 1200, HEIGHT = 800;
@@ -198,8 +197,6 @@ int main() {
 
 	//projection matrix that we want to attach
 	glm::mat4 projection = glm::perspective(45.0f, mainWindow.getBufferWidth() / mainWindow.getBufferHeigth(), 0.1f, 100.0f);
-
-	Assimp::Importer importer();
 
 	//Loop until window closed 
 	while (!mainWindow.getShouldClose()) {
