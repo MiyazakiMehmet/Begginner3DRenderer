@@ -1,8 +1,15 @@
-﻿  Mesh.cpp
-  Texture.cpp
+﻿  main.cpp
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(16,36): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(17,37): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(99,24): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(214,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
   Generating code
-  2 of 571 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+  489 of 800 functions (61.1%) were compiled, the rest were copied from previous compilation.
+    44 functions were new in current compilation
+    65 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   OpenGlCourse.vcxproj -> C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\x64\Release\OpenGlCourse.exe
