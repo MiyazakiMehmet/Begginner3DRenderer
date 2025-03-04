@@ -16,6 +16,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+#include "Model.h"
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -29,12 +30,18 @@ const GLint WIDTH = 1200, HEIGHT = 800;
 const float toRadians = 3.14159265f / 180.f;
 
 Window mainWindow;
+
 Camera camera;
+
 DirectionalLight directionalLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+
 Material shinyMaterial;
 Material dullMaterial;
+
+Model lambo;
+
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
@@ -192,6 +199,9 @@ int main() {
 	shinyMaterial = Material(1.0f, 32.0f);
 	dullMaterial = Material(0.3f, 4.0f);
 
+	lambo = Model();
+	lambo.LoadModel("Models/Lowpoly_tree_sample.obj");
+
 	GLuint uniformProjection = 0, uniformView = 0, uniformModel = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformEyePosition = 0;
 
@@ -268,6 +278,14 @@ int main() {
 		meshList[1]->plainTexture.UseTexture();
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(6.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+  		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		lambo.RenderModel();
 
 
 		glUseProgram(0);
