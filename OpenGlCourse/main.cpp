@@ -23,6 +23,8 @@
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
 
+#include "assimp/Importer.hpp"
+
 //Window Dimensions
 const GLint WIDTH = 1200, HEIGHT = 800;
 const float toRadians = 3.14159265f / 180.f;
@@ -188,7 +190,6 @@ int main() {
 							  20.0f);
 	//spotLightCount++;
 
-
 	shinyMaterial = Material(1.0f, 32.0f);
 	dullMaterial = Material(0.3f, 4.0f);
 
@@ -197,6 +198,8 @@ int main() {
 
 	//projection matrix that we want to attach
 	glm::mat4 projection = glm::perspective(45.0f, mainWindow.getBufferWidth() / mainWindow.getBufferHeigth(), 0.1f, 100.0f);
+
+	Assimp::Importer importer();
 
 	//Loop until window closed 
 	while (!mainWindow.getShouldClose()) {

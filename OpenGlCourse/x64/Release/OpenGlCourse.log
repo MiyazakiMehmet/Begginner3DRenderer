@@ -1,0 +1,16 @@
+﻿  main.cpp
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(16,36): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(17,37): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(93,24): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(207,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(202,19): warning C4930: 'Assimp::Importer importer(void)': prototyped function not called (was a variable definition intended?)
+  Generating code
+  1 of 571 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    7 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  OpenGlCourse.vcxproj -> C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\x64\Release\OpenGlCourse.exe
