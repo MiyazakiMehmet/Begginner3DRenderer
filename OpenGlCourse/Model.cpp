@@ -1,4 +1,4 @@
-#include "Model.h"
+﻿#include "Model.h"
 
 Model::Model()
 {
@@ -9,6 +9,7 @@ void Model::LoadModel(const std::string& fileName)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+
 	if (!scene) {
 		printf("Model (%s) failed to load: %s", fileName, importer.GetErrorString());
 	
@@ -18,6 +19,7 @@ void Model::LoadModel(const std::string& fileName)
 	//this will get the very first node in the scene (the one thats on the center)
 	LoadNode(scene->mRootNode, scene);
 
+	//load Texture 
 	LoadMaterials(scene);
 }
 
@@ -31,7 +33,7 @@ void Model::RenderModel()
 		if (materialIndex < textureList.size() && textureList[materialIndex]) {
 			textureList[i]->UseTexture();
 		}
-
+		//first drawed texture and draw mesh
 		meshList[i]->RenderMesh();
 	}
 }
@@ -92,6 +94,7 @@ void Model::LoadMesh(aiMesh* mesh, const aiScene* scene)
 	meshToTex.push_back(mesh->mMaterialIndex);
 }
 
+//We load the texture after we loaded the mesh 
 void Model::LoadMaterials(const aiScene* scene)
 {
 	textureList.resize(scene->mNumMaterials); //It will decide vectors size so we dont need to pushback
@@ -99,11 +102,17 @@ void Model::LoadMaterials(const aiScene* scene)
 	for (size_t i = 0; i < textureList.size(); i++) {
 		aiMaterial* material = scene->mMaterials[i];
 
-		textureList[i] = nullptr;
+		textureList[i] = nullptr; //For leaking
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE)) {
+			//Since you need png to load texture, you need some path
 			aiString path;
+
 			if (material->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS) {
+
+
+
+				printf("Texture found: %s\n", path.C_Str());
 				int idx = std::string(path.data).rfind("\\");
 				std::string fileName = std::string(path.data).substr(idx + 1);
 
@@ -120,9 +129,30 @@ void Model::LoadMaterials(const aiScene* scene)
 			}
 		}
 
+		// If the texture is embedded in the FBX
+		if (!textureList[i] && scene->mNumTextures > 0 && scene->mTextures) {
+			printf("a");
+			
+			// Find embedded texture for this material
+			for (unsigned int ti = 0; ti < scene->mNumTextures; ti++) {
+				if (scene->mTextures[ti]) {
+					textureList[i] = new Texture();
+					if (textureList[i]->LoadMemory(scene->mTextures[ti])) {
+						printf("✅ Loaded embedded texture for material %zu (Texture Index %u)\n", i, ti);
+						break;  // Stop after finding the first valid texture
+					}
+					else {
+						delete textureList[i];
+						textureList[i] = nullptr;
+					}
+				}
+			}
+		}
+
+
 		if (!textureList[i]) {
 			textureList[i] = new Texture("Textures/plain.png");
-			textureList[i]->LoadTextureA();
+			textureList[i]->LoadTexture();
 		}
 	}
 }

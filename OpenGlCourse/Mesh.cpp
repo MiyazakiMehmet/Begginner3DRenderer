@@ -47,11 +47,11 @@ void Mesh::CreateMesh(GLfloat* verticies, unsigned int* indicies, unsigned int n
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	brickTexture = Texture("Textures/brick.png");
-	brickTexture.LoadTextureA();
+	brickTexture.LoadTexture();
 	dirtTexture = Texture("Textures/dirt.png");
-	dirtTexture.LoadTextureA();
+	dirtTexture.LoadTexture();
 	plainTexture = Texture("Textures/plain.png");
-	plainTexture.LoadTextureA();
+	plainTexture.LoadTexture();
 
 
 }

@@ -22,7 +22,7 @@ public:
 	~Mesh();
 
 private:
-	GLuint VAO, VBO, IBO;
+	GLuint VAO, VBO, IBO; //IDs
 	GLsizei indexCount;
 
 	
