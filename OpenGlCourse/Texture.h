@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "stb_image.h"
+#include "assimp/scene.h"
 
 class Texture
 {
@@ -12,7 +13,8 @@ public:
 
 	//loading
 	bool LoadTexture();
-	bool LoadTextureA();
+	bool LoadMemory(const aiTexture* texture);
+	void SetupTexture(unsigned char* data, GLenum format);
 
 	//drawing/using
 	void UseTexture();

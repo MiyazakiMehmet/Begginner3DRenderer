@@ -1,4 +1,4 @@
-#define STB_IMAGE_IMPLEMENTATION
+﻿#define STB_IMAGE_IMPLEMENTATION
 
 #include <stdio.h>
 #include <string.h>
@@ -40,7 +40,7 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 Material shinyMaterial;
 Material dullMaterial;
 
-Model lambo;
+Model tree;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
@@ -162,7 +162,7 @@ int main() {
 	//Loading the shader
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
-	directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
+	directionalLight = DirectionalLight(1.0f, 1.0f, 1.0f,
 										0.1f,
 										-4.0f, -1.5f, -10.0f, 0.8f);
 
@@ -187,7 +187,7 @@ int main() {
 		0.0f, -1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		30.0f);
-	spotLightCount++;
+	//spotLightCount++;
 	spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
                         	  0.0f, 4.0f,
                         	  3.0f, 0.2f, 0.0f,
@@ -199,8 +199,8 @@ int main() {
 	shinyMaterial = Material(1.0f, 32.0f);
 	dullMaterial = Material(0.3f, 4.0f);
 
-	lambo = Model();
-	lambo.LoadModel("Models/Lowpoly_tree_sample.obj");
+	tree = Model();
+	tree.LoadModel("Models/tree.obj");
 
 	GLuint uniformProjection = 0, uniformView = 0, uniformModel = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformEyePosition = 0;
@@ -275,17 +275,17 @@ int main() {
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		meshList[1]->plainTexture.UseTexture();
+		meshList[1]->dirtTexture.UseTexture();
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(6.0f, -1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		lambo.RenderModel();
+		tree.RenderModel();
 
 
 		glUseProgram(0);
