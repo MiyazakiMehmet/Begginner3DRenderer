@@ -15,8 +15,13 @@ public:
 	void KeyControl(bool* keys, GLfloat deltaTime);
 	void MouseControl(GLfloat xChange, GLfloat yChange);
 
+	GLfloat GetYaw() { return yaw; }
+	GLfloat GetPitch() { return pitch; }
+
+
 	glm::vec3 GetCameraPosition();
 	glm::vec3 GetCameraDirection();
+	glm::vec3 ObjectPositionAttachedToCamera();
 
 	glm::mat4 CalculateViewMatrix();
 
