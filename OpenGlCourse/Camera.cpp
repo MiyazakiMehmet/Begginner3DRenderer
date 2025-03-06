@@ -1,4 +1,4 @@
-#include "Camera.h"
+﻿#include "Camera.h"
 
 Camera::Camera()
 {
@@ -67,6 +67,26 @@ glm::vec3 Camera::GetCameraPosition()
 glm::vec3 Camera::GetCameraDirection()
 {
 	return glm::normalize(front);
+}
+
+glm::vec3 Camera::ObjectPositionAttachedToCamera()
+{
+	glm::vec3 oldPos = GetCameraPosition();
+
+	// Radius is normalized to 1
+	float radius = 1.0f;
+
+	// Calculate new position based on yaw (θ)
+	float newX = radius * cos(glm::radians(yaw));
+	float newZ = radius * sin(glm::radians(yaw));
+
+	// Calculate new position based on pitch (θ)
+	float newY = radius * sin(glm::radians(pitch));
+
+
+
+	// Update object position
+	 return glm::vec3(newX, newY, newZ);
 }
 
 glm::mat4 Camera::CalculateViewMatrix()
