@@ -69,24 +69,22 @@ glm::vec3 Camera::GetCameraDirection()
 	return glm::normalize(front);
 }
 
-glm::vec3 Camera::ObjectPositionAttachedToCamera()
+glm::vec3 Camera::ObjectPositionAttachedToCamera(glm::vec3 offset)
 {
-	glm::vec3 oldPos = GetCameraPosition();
 
-	// Radius is normalized to 1
-	float radius = 1.0f;
+	// Step 1: Rotate around Y-axis (Yaw)
+	glm::vec3 yawRotated;
+	yawRotated.x = offset.x * cos(glm::radians(yaw)) - offset.z * sin(glm::radians(yaw));
+	yawRotated.z = offset.z * cos(glm::radians(yaw)) + offset.x * sin(glm::radians(yaw));
+	yawRotated.y = offset.y; // Y remains unchanged at this stage
 
-	// Calculate new position based on yaw (θ)
-	float newX = radius * cos(glm::radians(yaw));
-	float newZ = radius * sin(glm::radians(yaw));
+	// Step 2: Rotate around X-axis (Pitch) AFTER applying yaw
+	glm::vec3 finalRotated;
+	finalRotated.x = yawRotated.x; // X remains unchanged in pitch rotation
+	finalRotated.y = yawRotated.y * cos(glm::radians(pitch)) - yawRotated.z * sin(glm::radians(pitch));
+	finalRotated.z = yawRotated.y * sin(glm::radians(pitch)) + yawRotated.z * cos(glm::radians(pitch));
 
-	// Calculate new position based on pitch (θ)
-	float newY = radius * sin(glm::radians(pitch));
-
-
-
-	// Update object position
-	 return glm::vec3(newX, newY, newZ);
+	return finalRotated;
 }
 
 glm::mat4 Camera::CalculateViewMatrix()

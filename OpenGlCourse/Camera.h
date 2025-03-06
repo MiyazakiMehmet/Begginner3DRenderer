@@ -21,7 +21,7 @@ public:
 
 	glm::vec3 GetCameraPosition();
 	glm::vec3 GetCameraDirection();
-	glm::vec3 ObjectPositionAttachedToCamera();
+	glm::vec3 ObjectPositionAttachedToCamera(glm::vec3 offset);
 
 	glm::mat4 CalculateViewMatrix();
 
