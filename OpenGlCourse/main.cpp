@@ -40,7 +40,8 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 Material shinyMaterial;
 Material dullMaterial;
 
-Model tree;
+Model flashlight;
+Model lamp;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
@@ -163,22 +164,23 @@ int main() {
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
 	directionalLight = DirectionalLight(0.0f, 0.0f, 0.0f,
-										0.1f,
+										0.3f,
 										-4.0f, -1.5f, -10.0f, 0.8f);
 
+	glm::vec3 lampPosition = glm::vec3(6.0f, 0.9f, 0.0f);
 	unsigned int pointLightCount = 0;
 
-	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-								0.0f, 0.3f,
-							   -5.0f, 0.0f, 0.0f,
+	pointLights[0] = PointLight(1.0f, 1.0f, 0.0f,
+								0.2f, 0.4f,
+							   lampPosition.x, lampPosition.y - 2, lampPosition.z,
 								0.3f, 0.2f, 0.1f);
-	//pointLightCount++;
+	pointLightCount++;
 	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f,
 								0.0f, 0.1f,
 								2.0f, 2.0f, 0.0f,
 								0.3f, 0.2f, 0.1f);
 	//pointLightCount++;
-
+	
 	unsigned int spotLightCount = 0;
 
 	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f,
@@ -199,8 +201,11 @@ int main() {
 	shinyMaterial = Material(1.0f, 32.0f);
 	dullMaterial = Material(0.3f, 4.0f);
 
-	tree = Model();
-	tree.LoadModel("Models/Linterna.obj");
+	flashlight = Model();
+	flashlight.LoadModel("Models/Linterna.obj");
+
+	lamp = Model();
+	lamp.LoadModel("Models/streetlamp.fbx");
 
 	GLuint uniformProjection = 0, uniformView = 0, uniformModel = 0,
 		uniformSpecularIntensity = 0, uniformShininess = 0, uniformEyePosition = 0;
@@ -279,25 +284,36 @@ int main() {
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		meshList[1]->RenderMesh();
 
-		//Model
+		//Model Flashlight
 		model = glm::mat4(1.0f);
 		glm::vec3 cameraPosition = camera.GetCameraPosition();
-		glm::vec3 cameraYawPosition = camera.ObjectPositionAttachedToCamera();  // This contains the camera's rotation
 
-		// Step 2: Define the sword's position relative to the camera
-		// The offset in camera space (0, 0, -2) means 2 units behind the camera along the Z-axis
-		glm::vec3 swordOffset = glm::vec3(-0.3f, -0.2f, -0.2f);
+		glm::vec3 flashLightOffset = glm::vec3(0.3f, -0.1f, -0.2f);
+		glm::vec3 cameraYawPitchPosition = camera.ObjectPositionAttachedToCamera(flashLightOffset);
 
 		// Step 3: Apply the rotation and translation to the sword's position
 		// First, apply the camera's rotation to the offset to transform it into world space
-		glm::vec3 swordWorldPosition = cameraPosition - cameraYawPosition * swordOffset;
-		model = glm::translate(model, swordWorldPosition);
+		glm::vec3 flashlightWorldPosition = cameraPosition + cameraYawPitchPosition;
+		model = glm::translate(model, flashlightWorldPosition);
 		model = glm::rotate(model, (-camera.GetYaw() + 180) * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, (-camera.GetPitch() ) * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		tree.RenderModel();
+		flashlight.RenderModel();
+
+		//Model Lamp
+		model = glm::mat4(1.0f);
+
+		model = glm::translate(model, lampPosition);
+		model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		lamp.RenderModel();
 
 
 		glUseProgram(0);
