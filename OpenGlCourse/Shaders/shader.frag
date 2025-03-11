@@ -6,6 +6,7 @@ in vec4 vCol;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 DirectionalLightSpacePos;
 
 const int MAX_POINT_LIGHTS = 3;
 const int MAX_SPOT_LIGHTS = 3;
@@ -48,11 +49,27 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 uniform sampler2D theTexture;
+uniform sampler2D directionalShadowMap;
+
 uniform Material material;
 
 uniform vec3 eyePos;
 
-vec4 CalcLightByDirection(Light light, vec3 direction){
+float CalcDirectionalShadowFactor(DirectionalLight light){
+	//By dividing it with w we get position between -1 and 1
+	vec3 projCoords = DirectionalLightSpacePos.xyz / DirectionalLightSpacePos.w;
+	//But depth map needs coords between 0 and 1 so we're handling it
+	projCoords = (projCoords * 0.5) + 0.5;
+
+	float closestDepth = texture(directionalShadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+
+	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+
+	return shadow;
+}
+
+vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor){
 	vec4 ambientColour = vec4(light.colour, 1.0f) * light.ambientIntensity;
 	
 	float diffuseFactor = max(dot(normalize(Normal), normalize(direction)), 0.0f);
@@ -71,12 +88,13 @@ vec4 CalcLightByDirection(Light light, vec3 direction){
 		}
 	}
 	
-	return (ambientColour + diffuseColour + specularColour);
+	return (ambientColour + (1.0 - shadowFactor) * (diffuseColour + specularColour));
 }
 
 vec4 CalcDirectionalLight()
 {
-	return CalcLightByDirection(directionalLight.base, directionalLight.direction);
+	float shadowFactor = CalcDirectionalShadowFactor(directionalLight);
+	return CalcLightByDirection(directionalLight.base, directionalLight.direction, shadowFactor);
 }
 
 vec4 CalcPointLight(PointLight pLight){
@@ -85,7 +103,7 @@ vec4 CalcPointLight(PointLight pLight){
         float distance = length(direction);
         direction = normalize(direction);
 
-        vec4 colour = CalcLightByDirection(pLight.base, direction);
+        vec4 colour = CalcLightByDirection(pLight.base, direction, 0.0f);
         
         float attenuation = pLight.exponent * distance * distance +
                             pLight.linear * distance +
