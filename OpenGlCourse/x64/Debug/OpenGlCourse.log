@@ -1,1 +1,10 @@
-﻿  OpenGlCourse.vcxproj -> C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\x64\Debug\OpenGlCourse.exe
+﻿  main.cpp
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(16,36): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\Window.h(17,37): warning C4244: 'return': conversion from 'GLint' to 'GLfloat', possible loss of data
+  (compiling source file 'main.cpp')
+  
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(109,24): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\OpenGlCourse\main.cpp(357,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+  OpenGlCourse.vcxproj -> C:\Users\PC\source\repos\OpenGlCourse\Begginner3DRenderer\x64\Debug\OpenGlCourse.exe
