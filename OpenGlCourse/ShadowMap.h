@@ -15,15 +15,17 @@ public:
 
 	virtual void Read(GLenum textureUnit);
 
-	GLuint GetShadowWidth() { return shadowWidth; }
-	GLuint GetShadowHeight() { return shadowHeight; }
+	unsigned int GetShadowWidth() { return shadowWidth; }
+	unsigned int GetShadowHeight() { return shadowHeight; }
+	unsigned int GetShadowMap() { return shadowMap; }
+
 
 
 
 	~ShadowMap();
 
 private:
-	GLuint FBO, shadowMap;
-	GLuint shadowWidth, shadowHeight;
+	unsigned int FBO, shadowMap;
+	unsigned int shadowWidth, shadowHeight;
 };
 
