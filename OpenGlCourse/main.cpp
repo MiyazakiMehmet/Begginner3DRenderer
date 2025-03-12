@@ -49,6 +49,7 @@ Material dullMaterial;
 
 Model flashlight;
 Model lamp;
+Model house;
 glm::vec3 lampPosition;
 
 std::vector<Mesh*> meshList;
@@ -168,7 +169,7 @@ void CreateShaders() {
 void RenderScene() {
 	glm::mat4 model(1.0f);
 
-	model = glm::translate(model, glm::vec3(0.0f, 2.0f, -4.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, -4.0f));
 	//model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 	//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
 
@@ -209,6 +210,17 @@ void RenderScene() {
 	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 	flashlight.RenderModel();
 
+	//Model House
+	model = glm::mat4(1.0f);
+
+	model = glm::translate(model, glm::vec3(-12.0f,0.0f, -6.0f));
+	//model = glm::rotate(model, 180 * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+	//model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+
+
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+	house.RenderModel();
 	//Model Lamp
 	model = glm::mat4(1.0f);
 
@@ -222,23 +234,18 @@ void RenderScene() {
 	lamp.RenderModel();
 }
 
+
 //Drawing Shadows
 void DirectionalShadowMapPass(DirectionalLight* light) {
 	directionalShadowShader.UseShader();
 
-	glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
-
-	//We are saying that write these on new framebuffer that we specified. Not the defaukt one
-	//Note: We created frame buffer seperately because if we need a another framebuffeer instead of default one(the one glfw does it for us) we have to specify it
-	light->GetShadowMap()->Write();
-	//Instead of drawing colour we want to draw depth map so this func will not clear colour, it will clear existing depth buffers if there are exists
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	//Store glsl uniforms with datas
 	uniformModel = directionalShadowShader.GetModelLocation();
 
 	glm::mat4 lightTransform = light->CalculateLightTransform();
 	directionalShadowShader.SetDirectionalLightTransform(&lightTransform);
+	glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
+	glClear(GL_DEPTH_BUFFER_BIT);  // Ensure previous depth values are cleared
+	light->GetShadowMap()->Write();
 
 	RenderScene();
 
@@ -247,6 +254,9 @@ void DirectionalShadowMapPass(DirectionalLight* light) {
 
 //Drawing Colours
 void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
+	glViewport(0, 0, 1366, 768);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Using the shader
 	shaderList[0].UseShader();
 
@@ -257,13 +267,6 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
 	uniformShininess = shaderList[0].GetShininessLocation();
 	uniformEyePosition = shaderList[0].GetEyePositionLocation();
 
-	glViewport(0, 0, 1366, 768);
-	
-
-	//Clear Window froom colours and depth buffers if exists (we want to draw on a clean plane)
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	//Stores uniforms in glsl with datas
 	glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -273,20 +276,16 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
 	shaderList[0].SetDirectionalLight(&directionalLight);
 	shaderList[0].SetPointLights(pointLights, pointLightCount); //since pointLights is array we dont have to reference it because its already referenced
 	shaderList[0].SetSpotLights(spotLights, spotLightCount);
-	//For shadowing, we recalculate our Projection and view matrices to look from light camera of view
+	//For shadowing, we recalculate our Projection and view matrices to look from light camera of view	
+
 	glm::mat4 lightTransform = directionalLight.CalculateLightTransform();
 	shaderList[0].SetDirectionalLightTransform(&lightTransform);
 
-	//Passing Texture1 as index since Texture0 is full
-	directionalLight.GetShadowMap()->Read(GL_TEXTURE1);
-
-	//Since it's the one who carries TEXTURE0 it is bind to 0 (by default its already 0, but for debugging its convenient)
-	shaderList[0].SetTexture(0);
-	//Since it's the one who carries TEXTURE1 it is bind to 1
-	shaderList[0].SetDirectionalShadowMap(1);
-
 	spotLights[0].SetFlash(camera.GetCameraPosition(), camera.GetCameraDirection());
-	
+
+	// Ensure shadow map is properly bound to texture unit 1
+
+
 	RenderScene();
 }
 
@@ -300,20 +299,20 @@ int main() {
 	//Loading the shader
 	CreateShaders();
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
-	directionalLight = DirectionalLight(1024, 1024,
+	directionalLight = DirectionalLight(2048, 2048,
 										1.0f, 1.0f, 1.0f,
 										0.1f,
-										0.0f, -1.0f, 0.0f,
+										0.0f, -1.0f, 1.0f,
 										0.6f);
 
-	lampPosition = glm::vec3(6.0f, 1.9f, 0.0f);
+	lampPosition = glm::vec3(6.0f, 0.9f, 0.0f);
 	pointLightCount = 0;
 
 	pointLights[0] = PointLight(1.0f, 1.0f, 0.0f,
 								0.2f, 0.4f,
-							   lampPosition.x, lampPosition.y - 2, lampPosition.z,
+							   lampPosition.x, lampPosition.y-1, lampPosition.z,
 								0.3f, 0.2f, 0.1f);
-	//pointLightCount++;
+	pointLightCount++;
 	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f,
 								0.0f, 0.1f,
 								2.0f, 2.0f, 0.0f,
@@ -346,10 +345,10 @@ int main() {
 	lamp = Model();
 	lamp.LoadModel("Models/streetlamp.fbx");
 
-	
 
 	//projection matrix that we want to attach
 	glm::mat4 projection = glm::perspective(45.0f, mainWindow.getBufferWidth() / mainWindow.getBufferHeigth(), 0.1f, 100.0f);
+
 
 	//Loop until window closed 
 	while (!mainWindow.getShouldClose()) {
@@ -363,13 +362,7 @@ int main() {
 		camera.KeyControl(mainWindow.getKeys(), deltaTime);
 		camera.MouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
-		curAngle += 0.09f;
-		if (curAngle >= 360) {
-			//Accelerates triangle
-			curAngle -= 360;
-		}
-
-		DirectionalShadowMapPass(&directionalLight);
+		//DirectionalShadowMapPass(&directionalLight);
 		RenderPass(projection, camera.CalculateViewMatrix());
 
 		glUseProgram(0);
@@ -378,7 +371,6 @@ int main() {
 		mainWindow.SwapBuffers();
 
 	}
-
 
 	return 0;
 }

@@ -98,7 +98,7 @@ void Model::LoadMesh(aiMesh* mesh, const aiScene* scene)
 void Model::LoadMaterials(const aiScene* scene)
 {
 	textureList.resize(scene->mNumMaterials); //It will decide vectors size so we dont need to pushback
-
+	printf("Model has %d materials\n", (int)scene->mNumMaterials);
 	for (size_t i = 0; i < textureList.size(); i++) {
 		aiMaterial* material = scene->mMaterials[i];
 
@@ -127,6 +127,10 @@ void Model::LoadMaterials(const aiScene* scene)
 					textureList[i] = nullptr;
 				}
 			}
+		}
+		//If model does not have a diffuse texture assigned to assimp texture will not be found.
+		else {
+			printf("❌ No diffuse texture found for material %zu\n", i);
 		}
 
 		// If the texture is embedded in the FBX

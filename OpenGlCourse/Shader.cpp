@@ -91,6 +91,16 @@ GLuint Shader::GetSpecularIntensityLocation()
 	return uniformSpecularIntensity;
 }
 
+GLuint Shader::GetDirectionalLightTransformLocation()
+{
+	return uniformDirectionalLightTransform;
+}
+
+GLuint Shader::GetShaderID()
+{
+	return shaderID;
+}
+
 GLuint Shader::GetShininessLocation()
 {
 	return uniformShininess;
@@ -146,7 +156,6 @@ void Shader::SetTexture(GLuint textureUnit)
 void Shader::SetDirectionalShadowMap(GLuint textureUnit)
 {
 	glUniform1i(uniformDirectionalShadowMap, textureUnit);
-
 }
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform)
@@ -218,10 +227,6 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	uniformSpecularIntensity = glGetUniformLocation(shaderID, "material.specularIntensity");
 	uniformShininess = glGetUniformLocation(shaderID, "material.shininess");
 	uniformEyePosition = glGetUniformLocation(shaderID, "eyePos");
-	//Shadow
-	uniformTexture = glGetUniformLocation(shaderID, "theTexture");
-	uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
-	uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform");
 
 
 	//Point Light
@@ -286,6 +291,10 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 		snprintf(locBuff, sizeof(locBuff), "spotLights[%d].edge", i); //That func will store the string that we specified (%d = 0,1,2...)
 		uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuff);
 
+	//Shadow
+	uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightTransform");
+	uniformTexture = glGetUniformLocation(shaderID, "theTexture");
+	uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 	}
 }
 

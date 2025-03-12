@@ -33,7 +33,6 @@ bool Texture::LoadTexture() {
 	SetupTexture(texData, format);
 	stbi_image_free(texData);
 
-	std::cout << "✅ Loaded image with " << bitDepth << " channels from file: " << fileLocation << std::endl;
 	return true;
 }
 
